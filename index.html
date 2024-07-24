@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-900">
+    <div class="bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-xs md:max-w-md lg:max-w-lg">
+        <h2 class="text-2xl font-bold mb-4 text-white text-center">Calculator</h2>
+        <div class="text-right text-white mb-2" id="operation-display"></div>
+        <input type="text" class="w-full p-4 border border-gray-600 rounded mb-4 text-center text-white bg-gray-700 text-xl" placeholder="0" id="display" disabled>
+        <div class="grid grid-cols-4 gap-2">
+            <button class="bg-gray-600 text-white p-4 rounded hover:bg-gray-500" onclick="clearDisplay()">C</button>
+            <button class="bg-gray-600 text-white p-4 rounded hover:bg-gray-500" onclick="deleteNumber()">DEL</button>
+            <button class="bg-gray-600 text-white p-4 rounded hover:bg-gray-500" onclick="appendNumber('.')">.</button>
+            <button class="bg-blue-500 text-white p-4 rounded hover:bg-blue-600" onclick="chooseOperation('/')">/</button>
+            <button class="bg-gray-600 text-white p-4 rounded hover:bg-gray-500" onclick="appendNumber('7')">7</button>
+            <button class="bg-gray-600 text-white p-4 rounded hover:bg-gray-500" onclick="appendNumber('8')">8</button>
+            <button class="bg-gray-600 text-white p-4 rounded hover:bg-gray-500" onclick="appendNumber('9')">9</button>
+            <button class="bg-blue-500 text-white p-4 rounded hover:bg-blue-600" onclick="chooseOperation('*')">*</button>
+            <button class="bg-gray-600 text-white p-4 rounded hover:bg-gray-500" onclick="appendNumber('4')">4</button>
+            <button class="bg-gray-600 text-white p-4 rounded hover:bg-gray-500" onclick="appendNumber('5')">5</button>
+            <button class="bg-gray-600 text-white p-4 rounded hover:bg-gray-500" onclick="appendNumber('6')">6</button>
+            <button class="bg-blue-500 text-white p-4 rounded hover:bg-blue-600" onclick="chooseOperation('-')">-</button>
+            <button class="bg-gray-600 text-white p-4 rounded hover:bg-gray-500" onclick="appendNumber('1')">1</button>
+            <button class="bg-gray-600 text-white p-4 rounded hover:bg-gray-500" onclick="appendNumber('2')">2</button>
+            <button class="bg-gray-600 text-white p-4 rounded hover:bg-gray-500" onclick="appendNumber('3')">3</button>
+            <button class="bg-blue-500 text-white p-4 rounded hover:bg-blue-600" onclick="chooseOperation('+')">+</button>
+            <button class="bg-gray-600 text-white p-4 rounded hover:bg-gray-500 col-span-2" onclick="appendNumber('0')">0</button>
+            <button class="bg-blue-500 text-white p-4 rounded hover:bg-blue-600 col-span-2" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let currentNumber = '';
+        let previousNumber = '';
+        let operation = '';
+
+        function appendNumber(number) {
+            if (number === '.' && currentNumber.includes('.')) return;
+            currentNumber += number;
+            updateDisplay();
+        }
+
+        function chooseOperation(op) {
+            if (currentNumber === '' && previousNumber === '') return;
+            if (currentNumber === '' && previousNumber !== '') {
+                operation = op;
+                updateDisplay();
+                return;
+            }
+            if (previousNumber !== '') {
+                calculate();
+            }
+            operation = op;
+            previousNumber = currentNumber;
+            currentNumber = '';
+            updateDisplay();
+        }
+
+        function calculate() {
+            let result;
+            const prev = parseFloat(previousNumber);
+            const current = parseFloat(currentNumber);
+            if (isNaN(prev) || isNaN(current)) return;
+            switch (operation) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '*':
+                    result = prev * current;
+                    break;
+                case '/':
+                    result = prev / current;
+                    break;
+                default:
+                    return;
+            }
+            currentNumber = result.toString();
+            operation = '';
+            previousNumber = '';
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            currentNumber = '';
+            previousNumber = '';
+            operation = '';
+            updateDisplay();
+        }
+
+        function deleteNumber() {
+            currentNumber = currentNumber.toString().slice(0, -1);
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById('display').value = currentNumber;
+            document.getElementById('operation-display').textContent = `${previousNumber} ${operation} ${currentNumber}`;
+        }
+    </script>
+</body>
+</html>
